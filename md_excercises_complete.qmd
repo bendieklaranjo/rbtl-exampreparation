@@ -1,19 +1,26 @@
 ---
 title: "Exam Preparation" 
-author: "Ana Bendiek Laranjo" 
+author:
+  - name: Ana Bendiek Laranjo
+    orcid: 0009-0006-1720-6031
+    email: abendiek@ethz.ch
+    affiliation: 
+      - name: ETH Zurich
+        url: https://ethz.ch/de.html
 date: today 
 format:    
   html:
     embed-resources: true    
     toc: true     
     code-fold: true   
-  pdf: default 
+  pdf: default
 editor: visual
 editor_options: 
   chunk_output_type: console
+output-file: finalreport.pdf
 ---
 
-# Module 01: Hello
+# Module 01: Getting Started with R
 
 ## Introduction
 
@@ -73,7 +80,6 @@ ggplot(data = gapminder_2007,
        y = "life expectancy") +
   theme_minimal() 
 ```
-
 # Module 02a: Data visualization with ggplot2
 
 ## Import
@@ -350,6 +356,341 @@ ggplot(data = gapminder_2007,
                      fill = continent)) +
   geom_boxplot()
 ```
+#Assignment 02: Data Visualisation
+
+## Task 1: Import
+
+The required packages for this homework exercise have already been added.
+
+1.  Run the code chunk with the label 'load-packages' to load the required packages. Tipp: Click on the green play button in the top right corner of the code chunk.
+
+```{r}
+#| label: load-packages
+library(gapminder)
+library(ggplot2)
+library(dplyr)
+library(readr)
+library(sf)
+library(rnaturalearth)
+```
+
+## Task 2: Transform for data in 2007
+
+**Fill in the gaps**
+
+1.  A code chunk has already been created below.
+
+2.  Start with the `gapminder` object and add the pipe operator at the end of the line.
+
+3.  On a new line use the `filter()` function to narrow down the data for observation of the year 2007.
+
+4.  Use the assignment operator to assign the data to an object named `gapminder_2007`.
+
+5.  Run the code contained in the code chunk and fix any errors.
+
+6.  Next to the code chunk option `#| eval:` change the value from `false` to `true`.
+
+7.  Render the document and fix any errors.
+
+```{r}
+#| eval: true
+ 
+gapminder_2007 <- gapminder |> 
+  filter(year == 2007) 
+```
+
+## Task 3: Summarize data for life expectancy by continent
+
+**Fill in the gaps**
+
+1.  A code chunk has already been created.
+
+2.  Start with the `gapminder_2007` object and add the pipe operator at the end of the line.
+
+3.  On a new line use the `group_by()` function to group the operations that follow by continent. Add the pipe operator at the end of the line.
+
+4.  On a new line use the `summarise()` function to calculate the number of observations (count) and median life expectancy.
+
+5.  Use the assignment operator to assign the data to an object named `gapminder_summary_2007`.
+
+6.  Run the code contained in the code chunk and fix any errors.
+
+7.  Next to the code chunk option `#| eval:` change the value from `false` to `true`.
+
+8.  Render the document and fix any errors.
+
+```{r}
+#| eval: true
+
+gapminder_summary_2007 <- gapminder_2007 |> 
+  group_by(continent) |> 
+  summarise(
+    count = n(),
+    lifeExp = median(lifeExp)
+  )
+```
+
+## Task 4: Summarize data for life expectancy by continent and year
+
+**Fill in the gaps**
+
+1.  A code chunk has already been created.
+
+2.  Start with the `gapminder` object and add the pipe operator at the end of the line.
+
+3.  On a new line use the `group_by()` function to group the operations that follow by continent and year. Add the pipe operator at the end of the line.
+
+4.  On a new line use the `summarise()` function to calculate and median life expectancy.
+
+5.  Use the assignment operator to assign the data to an object named `gapminder_summary_continent_year`
+
+6.  Run the code contained in the code chunk and fix any errors.
+
+7.  Next to the code chunk option `#| eval:` change the value from `false` to `true`.
+
+8.  Render the document and fix any errors.
+
+```{r}
+#| eval: true
+
+gapminder_summary_continent_year <- gapminder |> 
+  group_by(continent, year) |> 
+  summarise(lifeExp = median(lifeExp)) 
+
+```
+
+## Task 5: Data visualization
+
+Thank you for working through the previous tasks. We are convinced that you have done a great job, but because the task descriptions aren't always unambiguous, we have imported the data that we would have expected to be created and stored in the objects `gapminder_2007`, `gapminder_summary_2007` and `gapminder_summary_continent_year` at the previous code chunks. This is to ensure that you can work through the following tasks.
+
+1.  Run the code contained in the code chunk below to import the data.
+
+```{r}
+#| label: load-data
+
+gapminder_2007 <- read_rds(here::here("data/gapminder-2007.rds"))
+
+gapminder_summary_2007 <- read_rds(here::here("data/gapminder-summary-2007.rds"))
+
+gapminder_summary_continent_year <- read_rds(here::here("data/gapminder-summary-continent-year.rds"))
+
+```
+
+## Task 6: Create a boxplot
+
+1.  A code chunk has already been created.
+
+2.  Use the `ggplot()` function and the `gapminder_2007` object to create a boxplot with the following aesthetic mappings:
+
+-   continent to the x-axis;
+-   life expectancy to the y-axis;
+-   continent to color using the `fill = continent` argument inside `aes()`
+
+3.  Do not display (ignore) the outliers in the plot. **Note: Use a search engine or an AI tool to find the solution and add the link to the solution you have found.**
+
+4.  Run the code contained in the code chunk and fix any errors.
+
+5.  What are the data types of the three variables used for aesthetic mappings?
+
+```{r}
+
+ggplot(data = gapminder_2007,
+       mapping = aes(x = continent,
+                     y = lifeExp,
+                     fill = continent)) +
+  geom_boxplot(outlier.shape = NA) 
+
+```
+
+## Task 7: Create a timeseries plot
+
+1.  A code chunk has already been created.
+
+2.  Use the `ggplot()` function and the `gapminder_summary_continent_year` object to create a connected scatterplot (also called timeseries plot) using the `geom_line()` and `geom_point()`functions with the following aesthetic mappings:
+
+-   year to the x-axis;
+-   life expectancy to the y-axis;
+-   continent to color using the `color = continent` argument inside `aes()`
+
+3.  Run the code contained in the code chunk and fix any errors.
+
+```{r}
+
+ggplot(data = gapminder_summary_continent_year,
+       mapping = aes(x = year,
+                     y = lifeExp,
+                     color = continent)) +
+  geom_line() +
+  geom_point() 
+
+```
+
+## Task 8: Create a barplot
+
+### with `geom_col()`
+
+1.  A code chunk has already been created.
+
+2.  Use the `ggplot()` function and the `gapminder_summary_2007` object to create a barplot using the `geom_col()` function with the following aesthetic mappings:
+
+-   continent to the x-axis;
+-   count to the y-axis;
+
+3.  Run the code contained in the code chunk and fix any errors.
+
+```{r}
+ggplot(data = gapminder_summary_2007,
+       mapping = aes(x = continent,
+                     y = count)) +
+  geom_col()
+```
+
+### with `geom_bar()`
+
+1.  A code chunk has already been created.
+
+2.  Use the `ggplot()` function and the `gapminder_2007` object to create a barplot using the `geom_bar()` function with the following aesthetic mappings:
+
+-   continent to the x-axis;
+
+3.  Run the code contained in the code chunk and fix any errors.
+
+4.  The plot is identical to the plot created with `geom_col()`. Why? What does the `geom_bar()` function do? Write your text here:
+
+```{r}
+ggplot(data = gapminder_2007,
+       mapping = aes(x = continent)) +
+  geom_bar()
+```
+
+## Task 9: Create a histogram
+
+1.  A code chunk has already been created.
+
+2.  Use the `ggplot()` function and the `gapminder_2007` object to create a histogram using the `geom_histogram()` function with the following aesthetic mappings:
+
+-   life expectancy to the x-axis;
+-   continent to color using the `fill = continent` argument inside `aes()`
+
+3.  Run the code contained in the code chunk and fix any errors.
+
+4.  Inside the `geom_histogram()` function, add the following arguments and values:
+
+-   `col = "grey30"`
+-   `breaks = seq(40, 85, 2.5)`
+
+5.  Run the code contained in the code chunk and fix any errors.
+
+6.  Describe how the `geom_histogram()` function is similar to the `geom_bar()` function.
+
+7.  What happens by adding the 'breaks' argument? Play around with the numbers inside of `seq()` to see what changes. Describe here what you observe:
+
+```{r}
+
+ggplot(data = gapminder_2007,
+       mapping = aes(x = lifeExp, 
+                     fill = continent)) +
+  geom_histogram(col = "grey30", breaks = seq(40, 85, 2.5)) 
+
+```
+
+## Task 10: Scatterplot and faceting
+
+1.  A code chunk has already been created.
+
+2.  Use the `ggplot()` function and assign `gapminder_2007` and create a scatterplot using the `geom_point()`function with the following aesthetic mappings:
+
+-   gdpPercap the x-axis;
+-   lifeExp to the y-axis;
+-   population to the size argument;
+-   country to color using the `color = continent` argument inside `aes()`
+
+4.  Run the code contained in the code chunk and fix any errors.
+
+5.  Use the variable continent to facet the plot by adding: `facet_wrap(~continent)`.
+
+6.  Run the code contained in the code chunk and fix any errors.
+
+```{r}
+
+ggplot(data = gapminder_2007,
+       mapping = aes(x = gdpPercap,
+                     y = lifeExp,
+                     size = pop,
+                     color = country)) +
+  geom_point(show.legend = FALSE) +
+  facet_wrap(~continent) 
+  
+```
+
+## Task 11: Create a lineplot and use facets
+
+1.  A code chunk with complete code has already been prepared.
+
+2.  Run the code contained in the code chunk and fix any errors.
+
+3.  Remove the '\#' sign at the line that starts with the `scale_color_manual()` function
+
+4.  What is stored in the `country_colors` object? Find out by executing the object in the Console (type it to the Console and hit enter). Do the same again, but with a question mark `?country_colors`.
+
+5.  Next to the code chunk option `#| eval:` change the value from `false` to `true`.
+
+6.  Render the document and fix any errors.
+
+```{r}
+#| eval: true
+
+ggplot(data = gapminder,
+       mapping = aes(x = year, 
+                     y = lifeExp, 
+                     group = country, 
+                     color = country)) +
+  geom_line(lwd = 1, show.legend = FALSE) + 
+  facet_wrap(~continent) +
+  # scale_color_manual(values = country_colors) +
+  theme_minimal() 
+
+```
+
+## Task 12: Create a choropleth Maps
+
+You can also prepare maps with `ggplot2`. It's beyond the scope of the class to teach you the foundations of spatial data in R, but a popular package to work with spatial data is the `sf` (Simple Features) R Package. The `rnaturalearth` R Package facilitates world mapping by making [Natural Earth](https://www.naturalearthdata.com/) map data more easily available to R users.
+
+The code chunk below contains code for a world map that shows countries by income group. To view the map, do the following:
+
+1.  Run the code contained in the code chunk and fix any errors.
+
+2.  Next to the code chunk option `#| eval:` change the value from `false` to `true`.
+
+3.  Render the document and fix any errors.
+
+```{r}
+#| eval: true
+
+world <- ne_countries(scale = "small", returnclass = "sf")
+
+world |> 
+  mutate(income_grp = factor(income_grp, ordered = T)) |> 
+  ggplot(aes(fill = income_grp)) + 
+  geom_sf() +
+  theme_void() +
+  theme(legend.position = "top") +
+  labs(fill = "Income Group:") +
+  guides(fill = guide_legend(nrow = 2, byrow = TRUE))
+
+
+```
+
+The code for the code chunk is taken from here: More here: https://bookdown.org/alhdzsz/data_viz_ir/maps.html
+
+### Working with spatial data in R
+
+If you are interested in working with spatial data in R, then we recommend the following resources for further study:
+
+-   Geocompuation with R - Book: https://geocompr.robinlovelace.net/
+-   Simple Features for R - Article: https://r-spatial.github.io/sf/articles/sf1.html
+-   tmap: thematic maps in R - R Package: https://r-tmap.github.io/tmap/
+
 
 # Module 03a: Data transformation with dplyr
 
@@ -762,6 +1103,143 @@ sanitation_national_2020_od |>
   )
 ```
 
+# Assignment 03: Data transformation with dplyr
+
+```{r}
+#| label: load-packages
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(ggthemes)
+```
+
+## Import
+
+In this exercise we use data of the UNICEF/WHO Joint Monitoring Programme (JMP) for Water Supply, Sanitation and Hygiene (WASH). The data is available at <https://washdata.org/data> and published as an R data package at <https://github.com/WASHNote/jmpwashdata/>.
+
+The data set `jmp_wld_sanitation_long` is available in the `data` folder of this repository. The data set is in long format and contains the following variables:
+
+-   `name`: country name
+-   `iso3`: ISO3 country code
+-   `year`: year of observation
+-   `region_sdg`: SDG region
+-   `residence`: residence type (national, rural, urban)
+-   `varname_short`: short variable name (JMP naming convention)
+-   `varname_long`: long variable name (JMP naming convention)
+
+We use the `read_csv()` function to import the data set into R.
+
+```{r}
+sanitation <- read_csv("data/jmp_wld_sanitation_long.csv")
+```
+
+## Task 1
+
+1.  Run all code chunks above.
+2.  Use the `glimpse()` function to get an overview of the data set.
+3.  How many variables are in the data set?
+
+```{r}
+glimpse(sanitation)
+```
+
+## Task 2
+
+1.  Use the `count()` function with varname_short and varname_long to identify the definitions of the levels in these two variables.
+
+```{r}
+sanitation |> 
+  count(varname_short, varname_long)
+```
+
+## Task 3
+
+1.  Use the `filter()` function to create a subset of the data set that only contains observations:
+
+-   for a country of your choice,
+-   for the year 2000 and 2020,
+-   for all variables that are not "safely managed sanitation services".
+
+2.  Store the result as a new object in your environment with a name of your choice.
+
+```{r}
+sanitation_uga <- sanitation |> 
+  filter(iso3 == "UGA",
+         year %in% c(2000, 2020), 
+         varname_short != "san_sm")
+```
+
+## Task 4
+
+1.  Use the `count()` function with the data you created in Task 3 to verify that year 2000 and 2020 remained in the year variable.
+
+```{r}
+sanitation_uga |> 
+  count(year)
+
+```
+
+## Task 5
+
+1.  Use the `ggplot()` function to create a bar plot with `geom_col()` for the data you created in Task 3.
+
+2.  Use the `aes()` function to map the `residence` variable to the x-axis, the `percent` variable to the y-axis, and the `varname_long` variable to the fill aesthetic.
+
+3.  Use `facet_wrap()` to create a separate plot for each year.
+
+4.  Change the fill colors using `scale_fill_colorblind()`.
+
+5.  Add labels to the bars by copying the code below this bullet point and adding it to your code for the plot.
+
+```         
+geom_text(aes(label = round(percent, 1)), 
+          position = position_stack(vjust = 0.5),
+          size = 3,
+          color = "white") 
+```
+
+```{r}
+ggplot(data = sanitation_uga,
+       mapping = aes(x = residence, 
+                     y = percent, 
+                     fill = varname_long)) +
+  geom_col() +
+  facet_wrap(~year) +
+  scale_fill_colorblind() +
+  geom_text(aes(label = round(percent, 1)), 
+            position = position_stack(vjust = 0.5),
+            size = 3,
+            color = "white") 
+```
+
+## Task 6
+
+If you haven't worked with JMP indicators before, the following questions will be challenging to answer.
+
+1.  Look at the plot that you created. What do you notice about the order of the bars / order of the legend?
+2.  What would you want to change?
+3.  Why did we remove "safely managed sanitation services" from the data set in Task 3?
+
+## Task 7
+
+1.  Run the code in the code chunk below.
+2.  What do you observe when you look at the code and plot?
+
+```{r}
+
+sanitation_2020 <- sanitation |> 
+  filter(year == 2020)
+
+ggplot(data = sanitation_2020,
+       mapping = aes(x = percent, fill = varname_short)) +
+  geom_histogram() +
+  facet_grid(varname_short ~ residence, scales = "free_y") +
+  scale_fill_colorblind() +
+  theme(legend.position = "none") 
+
+```
+
+
 # Module 04a: Factors
 
 ```{r}
@@ -956,7 +1434,7 @@ Conditional statements with mutate() & case_when() of dplyr R package
 ### waste data
 
 ```{r}
-#| eval: false
+#| eval: true
 
 waste_cat <- waste |> 
     mutate(generation_kg_capita = generation_tons_year / population * 1000) |> 
@@ -1541,3 +2019,28 @@ flights |>
   summarise(sum = sum(delayed),
             prop = mean(delayed))
 ```
+
+#Module 07: Writing scholarly articles
+
+## Scholarly writing
+
+Scholarly articles require much more detail in their front matter than simply a title and an author. Quarto provides a rich set of YAML metadata keys to describe these details. You can copy & paste from this example to your own report.
+
+## Task 1: Front Matter
+
+-   Replace the values under author for name, orcid, email, and affiliation with your own
+-   Render the document to see the changes
+
+## Task 2: Citations
+
+1.  Add the citation key for the paper "'My flight arrives at 5 am, can you pick me up?': The gatekeeping burden of the african academic" as an in-text reference to the sentence below
+
+In @tilley2021my, the authors describe how visitors still expect a personal pick-up, despite the availability of taxi services.
+
+2.  Add the citation key for the paper "'The rich will always be able to dispose of their waste': a view from the frontlines of municipal failure in Makhanda, South Africa" as a citation at the end of the sentence below.
+
+Inequality underpins waste management systems, structuring who can or cannot access services [@kalina2023rich].
+
+## Bibliographies
+
+Your folder already contains a `references.bib` file. One way of creating and adding to this file is by using the RStudio Visual Editor mode. Another way is by exporting a collection in Zotero reference management tool. Part of your homework will be to setup Zotero. For your literature research, you will then use Zotero and in your final report use an exported `.bib` file to cite references in your report. <https://rbtl-fs24.github.io/website/project>
