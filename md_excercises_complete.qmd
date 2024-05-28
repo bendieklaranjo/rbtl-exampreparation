@@ -365,7 +365,6 @@ The required packages for this homework exercise have already been added.
 1.  Run the code chunk with the label 'load-packages' to load the required packages. Tipp: Click on the green play button in the top right corner of the code chunk.
 
 ```{r}
-#| label: load-packages
 library(gapminder)
 library(ggplot2)
 library(dplyr)
@@ -1106,7 +1105,6 @@ sanitation_national_2020_od |>
 # Assignment 03: Data transformation with dplyr
 
 ```{r}
-#| label: load-packages
 library(readr)
 library(dplyr)
 library(ggplot2)
@@ -2019,6 +2017,174 @@ flights |>
   summarise(sum = sum(delayed),
             prop = mean(delayed))
 ```
+# Assignment 06: Data formats
+
+## Part 1: Data preparation
+
+### Task 1: Load packages
+
+The required packages for this homework exercise have already been added.
+
+1.  Run the code chunk below to load the required packages. Tipp: Click on the green play button in the top right corner of the code chunk.
+2.  What's the `tidyverse` Package? Describe in maximum two sentences below.
+    -   The tidyverse is a collection of R packages designed for data science that share a common design philosophy, grammar, and data structures. It provides a powerful and coherent system for working with data, including tools for data import, tidying, manipulation, visualization, and programming.\[1\]\[3\]
+
+        Citations: \[1\] <https://jhudatascience.org/tidyversecourse/intro.html> \[2\] <https://www.tmwr.org/tidyverse> \[3\] <https://tidyverse.tidyverse.org/articles/paper.html> \[4\] <https://rafalab.dfci.harvard.edu/dsbook-part-1/R/tidyverse.html> \[5\] <https://www.datacamp.com/tutorial/tidyverse-tutorial-r>
+
+        Soruce: <https://www.perplexity.ai/search/describe-the-tidyverse-JEwTv1xJTvOFRgullFskTQ>
+
+```{r}
+library(tidyverse)
+```
+
+### Task 2: Import data
+
+1.  Use the `read_csv()` (**Note**: Watch out for the `_` and don't use the `.` as in `read.csv()`) function to import the "msw-generation-and-composition-by-income.csv" data from the `data` directory and assign it to an object with the name `waste_data`.
+
+```{r}
+waste_data = read_csv(file = "data/msw-generation-and-composition-by-income.csv")
+
+```
+
+### Task 3: Vector coercion
+
+1.  Use `waste_data` and `count()` to create a frequency table for the `income_cat` variable.
+
+2.  Use then `c()` function to create a vector with a sensible order for the the values in `income_cat`. Use the assignment operator `<-` to assign the vector to an object with the name `levels_income_cat`.
+
+3.  Starting with the `waste_data` object, use the pipe operator and the `mutate()` function to convert the `income_cat` variable from a variable of type character to a variable of type factor. Use the levels you defined in the previous step.ories using the following code to identify the correct spelling of the categories in the variable `income_cat`.
+
+4.  Assign the created data frame to an object with the name `waste_data_fct`.
+
+5.  Render and fix any errors
+
+```{r}
+# Create a frequency table for the income_cat variable
+waste_data %>% 
+  count(income_cat)
+
+#Create vector with a sensible order for the values in income_cat
+levels_income_cat <- c(
+  "Low income",
+  "Medium income",
+  "High income"
+)
+
+#Conversion of data type
+waste_data_fct <- waste_data %>%
+  mutate(income_cat = factor(income_cat, levels = levels_income_cat))
+```
+
+### Task 4: From wide to long
+
+1.  Starting with the `waste_data_fct` object, use the `pivot_longer()` function to convert the data frame from a wide to a long format. Apply the following:
+
+-   bring all columns from `food_organic_waste` to `yard_garden_green_waste` into a long format
+-   send the variable names to a column named "waste_category"
+-   send the values of the variables to a column named "percent"
+
+2.  Remove all `NA`s from the `percent` variable
+
+3.  Assign the created data frame to an object with the name `waste_data_long`
+
+4.  Render and fix any errors
+
+```{r}
+waste_data_long <- waste_data_fct %>% 
+  pivot_longer(cols = food_organic_waste:yard_garden_green_waste,
+               names_to = "waste_category", 
+               values_to = "percent") %>% 
+  filter(!is.na(percent))  # Remove rows where percent column is NA
+
+
+```
+
+## Part 2: Data summary
+
+### Task 1: Import data
+
+I have stored the data that I would have expected at the end of the previous task and import it here.
+
+1.  Run the code in the code chunk below.
+
+```{r}
+waste_data_long <- read_rds("data/msw-generation-and-composition-by-income-long.rds")
+```
+
+### Task 2: Summarise data
+
+1.  Starting with `waste_data_long`, group the data by`income_cat` and `waste_category`, then create a summary table containing the mean of percentages (call this mean_percent) for each group.
+
+    -   could this be done with a for-loop?
+
+2.  Assign the created data frame to an object with the name `waste_data_long_mean`.
+
+```{r}
+waste_data_long_mean <- waste_data_long %>%
+  group_by(income_cat, waste_category) %>%
+  summarise(mean_percent = mean(percent))
+```
+
+### Task 3: Table display
+
+1.  Starting with the `waste_data_long_mean` object, execute the code and observe the output in the Console. Would you publish this table in this format in a report?
+    -   No, while it is in the long format, it still contains NA values. Before publishing I would try to porperly code the variable "income_cat"
+
+```{r}
+waste_data_long_mean
+```
+
+### Task 4: From long to wide
+
+1.  Starting with the `waste_data_long_mean` object, use the pipe operator to add another line of code which uses the `pivot_wider()` function to bring the data from a long format into a wide format using names for variables from `waste_category` and corresponding values from `mean_percent`
+
+2.  Execute the code and observe the output in the Console. Would you publish this table in a report in this format?
+
+    -   For a report I find it more intelligible, however no histograms can be plotted and therefore I would not publish it in that way.
+
+3.  Render and fix any errors
+
+```{r}
+waste_data_long_mean %>% 
+  pivot_wider(names_from = waste_category,
+              values_from = mean_percent)
+
+```
+
+## Part 3: Data visualization
+
+### Task 1: Import data
+
+I have stored the data that I would have expected at the end of the previous task and import it here.
+
+1.  Run the code in the code chunk below.
+
+```{r}
+waste_data_long_mean <- read_rds("data/msw-generation-and-composition-by-income-long-mean.rds")
+```
+
+### Task 2: Reproduce a plot
+
+1.  Render and fix any errors.
+
+2.  Reproduce the plot that you see as an image below when you render the report and view the output in your Viewer tab in the bottom right window.
+
+**Hint:** To get those bars displayed next to each other, use the `geom_col()` function and apply the `position = position_dodge()` argument and value. The colors don't have to be exactly the same colors, just not the default color scale
+
+**Note:** The size of the plot will be different. That is alright and does not need to match.
+
+```{r}
+ggplot(data = waste_data_long_mean,
+       aes(x = mean_percent,
+           y = waste_category,
+           fill = income_cat)) +
+  geom_col(position = position_dodge(0.9), na.rm = TRUE) +
+  labs(x = "Income Category", y = "Mean Percent", fill = "Waste Category") +
+  theme_minimal()
+
+```
+
+![](figs/fig-01-mean-waste-composition-by-income.png)
 
 #Module 07: Writing scholarly articles
 
