@@ -1199,3 +1199,345 @@ waste_tbl_income |>
     kable(digits = 0)
 ```
 
+# Module 06a: Cross-references
+## Tables and Figures
+
+```{r}
+library(tidyverse)
+library(ggthemes)
+library(palmerpenguins)
+library(gt)
+```
+
+### Task 1: Tables
+
+1.  Render the document and identify if the cross-reference to the table generated from the code below works.
+
+2.  Fix the label in the code-chunk below so that the cross-reference works.
+
+3.  Render the document to check if the cross-reference to the table generated from the code below works
+
+See @tbl-penguins for data on a few penguins.
+
+```{r}
+#| label: tbl-penguins
+#| tbl-cap: Bill depth of penquins by island and species.
+
+penguins |> 
+  filter(!is.na(bill_depth_mm)) |> 
+  group_by(island, species) |>
+  summarise(n = n(),
+            mean_bill_depth = mean(bill_depth_mm),
+            sd_bill_depth = sd(bill_depth_mm)) |>
+  ungroup() |> 
+  gt() |> 
+  fmt_number(columns = c(mean_bill_depth, sd_bill_depth),
+             decimals = 1)
+```
+
+### Task 2: Figures
+
+1.  Add a caption and a label for a figure to the code chunk options below.
+2.  Add a cross-reference to the figure generated from the code below.
+
+In @fig-penguins, we see that ...
+
+```{r}
+#| fig-width: 5
+#| fig-asp: 0.618
+#| fig-cap: Bill length and depth of penguins
+#| label: fig-penguins
+
+ggplot(data = penguins,
+       mapping = aes(x = bill_length_mm, 
+                     y = bill_depth_mm,
+                     color = species,
+                     shape = species)) +
+  geom_point() +
+  scale_color_colorblind() +
+  labs(x = "Bill length (mm)", y = "Bill depth (mm)") +
+  theme_minimal()
+```
+
+#Module 06b: Vector types"
+
+```{r}
+library(tidyverse)
+library(gapminder)
+
+```
+
+## Part 1: (Atomic) Vectors
+
+Atomic vectors, of which there are six types: logical, integer, double, character, complex, and raw.
+
+Integer and double vectors are collectively known as numeric vectors.
+
+-   lgl: logical
+-   int: integer
+-   dbl: double
+-   chr: character
+
+```{r}
+
+glimpse(gapminder)
+
+```
+
+### Types of atomic vectors
+
+```{r}
+
+vector_lgl <- c(TRUE, TRUE, FALSE)
+typeof(vector_lgl)
+sum(vector_lgl)
+as.numeric(vector_lgl)
+
+vector_int <- c(1L, 3L, 6L)
+typeof(vector_int)
+
+vector_dbl <- c(1293, 5.1, 90.5)
+typeof(vector_dbl)
+
+vector_chr <- c("large", "small", "medium")
+typeof(vector_chr)
+
+```
+
+### Logical vectors
+
+```{r}
+
+vector_dbl > 150
+
+"large" == vector_chr
+
+str_detect(vector_chr, "lar")
+
+```
+
+### Explicit vector coercion & augmented vectors
+
+Vectors can also contain arbitrary additional metadata in the form of attributes. These attributes are used to create augmented vectors which build on additional behavior. For example, factors are built on top of integer vectors.
+
+```{r}
+
+vector_fct <- factor(vector_chr, levels = c("small", "medium", "large"))
+
+typeof(vector_fct)
+attributes(vector_fct)
+as.integer(vector_fct)
+```
+
+### Tibbles / Dataframes
+
+Tibbles / dataframes have vectors as columns. Each vector has the same length. Each vector can be thought of as a column and the length of each vector is the number of rows.
+
+```{r}
+tib_data <- tibble(
+  vector_lgl,
+  vector_int,
+  vector_dbl,
+  vector_chr,
+  vector_fct,
+  date = Sys.Date()
+)
+```
+
+### Accessing a vector from a dataframe
+
+```{r}
+tib_data |> 
+  pull(vector_fct)
+
+tib_data$vector_fct
+
+tib_data[5]
+
+tib_data[[5]]
+
+```
+
+## Part 2: Programming with R
+
+### For loops
+
+Iterate code for each element in a vector.
+
+```{r}
+
+size <- tib_data$vector_fct
+
+for (s in size) {
+  msg <- paste(
+    "------", s, "------"
+  )
+  print(msg) 
+}
+```
+
+### If statement
+
+```{r}
+pet <- c("bat", "cat", "dog", "bird", "horse")
+
+for(p in pet) {
+  if(p == "dog") {
+    msg <- paste("A", p, "is the best!")
+  } else {
+    msg <- paste("A", p, "is okay I guess.")
+  }
+  print(msg) 
+}
+```
+
+```{r}
+
+sounds <- c(NA, "meow", "woof", "chirp", "neigh")
+
+for (i in seq_along(pet)) {
+  if (pet[i] == "dog") {
+    message <- paste("The", pet[i], "goes", sounds[i])
+  } else {
+    message <- paste("The", pet[i], "says", sounds[i])
+  }
+  print(message)
+}
+```
+
+#Module 06c: Excercises
+```{r}
+#| label: setup
+
+library(tidyverse)
+library(nycflights13)
+```
+
+## Task 1: Numeric vector
+
+1.  Create a numeric vector using `c()` with the numbers from 1, 2, 3, 4, 5 to 10. Run the code.
+
+2.  Create a numeric vector using `seq(1, 10)` and run the code.
+
+3.  What's the difference between the two vectors?
+
+```{r}
+c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+
+seq(1, 10)
+```
+
+## Task 2: Character vector
+
+1.  Create a character vector using `c()` with the letters from "a" to "f". Run the code.
+
+2.  On a new line, write `letters` and run the code. What's stored in the `letters` object?
+
+3.  On a new line, write `?letters` and run the code. What did you learn?
+
+```{r}
+
+c("a", "b", "c", "d", "e", "f")
+
+letters
+```
+
+## Task 3: Numeric sequences
+
+1.  Create a numeric vector using `seq(1, 100, 1)` and run the code. What does the code do?
+
+2.  Create a numeric vector using `runif(100, 1, 100)` and run the code. What does the code do?
+
+3.  Create a numeric vector using `sample(1:100, 100, replace = FALSE)` and run the code. What does the code do?
+
+```{r}
+
+seq(1, 100, 1)
+
+runif(100, 1, 100)
+
+sample(1:100, 100, replace = FALSE)
+
+seq_along(letters)
+
+```
+
+## Task 4: Numeric sequences along a character vector
+
+1.  Create a numeric vector using `seq_along(letters)` and run the code. What does the code do?
+
+2.  Create a character vector using `month.name` and run the code. What does the code do?
+
+3.  Create a numeric vector using `seq_along(month.name)` and run the code. What does the code do?
+
+```{r}
+seq_along(letters)
+
+month.name
+
+seq_along(month.name)
+
+```
+
+## Task 5: Distribution of random numbers
+
+1.  Create a numeric vector `runif(n = 1000, min = 1, max = 100)  |> hist()` and run the code. What does the code do? Remove `|> hist()` and run the code again. What does the code do?
+
+2.  Create a numeric vector `rnorm(n = 1000, mean = 500, sd = 150) |> hist()` and run the code. What does the code do? Remove `|> hist()` and run the code again. What does the code do?
+
+```{r}
+
+runif(n = 1000, min = 1, max = 100) |> hist()
+
+rnorm(n = 1000, mean = 500, sd = 150) |> hist()
+```
+
+## Task 6: Logical vectors
+
+1.  Create a numeric vector using `rnorm(n = 1000, mean = 50, sd = 5)` and use the assignment operator to store it in an object called `norm100`. Run the code.
+
+2.  Write:
+
+-   `mean(norm100)` and run the code. What does the code do?
+-   `norm100 >= 50` and run the code. What does the code do?
+-   `sum(norm100 >= 50)` and run the code. What does the code do?
+-   `mean(norm100 >= 50)` and run the code. What does the code do?
+
+```{r}
+
+norm_dist <- rnorm(n = 1000, mean = 50, sd = 5) 
+
+mean(norm_dist)
+
+norm_dist >= 50
+
+sum(norm_dist >= 50)
+
+mean(norm_dist >= 50)
+
+```
+
+## Task 7 (stretch goal)
+
+In this task, we will use the `flights` data object of the `nycflights13` package. The `flights` data object contains information about all flights that departed from NYC (e.g., EWR, JFK and LGA) in 2013. The data object contains 336,776 rows and 19 columns.
+
+1.  Use the `flights` data object with `mutate()` to create `delayed`, a variable that displays whether a flight was delayed (`arr_delay > 0`).
+
+2.  Use relocate to move `delayed` to the front of the data frame. Run the code. What vector type is the `delayed` variable?
+
+3.  Then, remove all rows that contain an NA in `delayed`.
+
+4.  Finally, create a summary table with `summarise()` that shows
+
+-   How many flights were delayed
+-   What proportion of flights were delayed
+
+```{r}
+
+flights |> 
+  mutate(delayed = arr_delay > 0) |> 
+  relocate(delayed) |> 
+  filter(!is.na(delayed)) |> 
+  summarise(sum = sum(delayed),
+            prop = mean(delayed))
+```
