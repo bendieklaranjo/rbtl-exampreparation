@@ -1,0 +1,2216 @@
+---
+title: "Exam Preparation" 
+author:
+  - name: Ana Bendiek Laranjo
+    orcid: 0009-0006-1720-6031
+    email: abendiek@ethz.ch
+    affiliation: 
+      - name: ETH Zurich
+        url: https://ethz.ch/de.html
+date: today 
+format:    
+  html:
+    embed-resources: true    
+    toc: true     
+    code-fold: false   
+  pdf: default
+editor: visual
+editor_options: 
+  chunk_output_type: console
+output-file: finalreport.pdf
+---
+
+# Module 01: Getting Started with R
+
+## Introduction
+
+### Data
+
+Data can be imported from many different sources. In this exercise, we import data from:
+
+1.  an R Package that is loaded via the `library()` function.
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(gapminder)
+library(gt)
+```
+
+### Gapminder data
+
+For this analysis we'll use the Gapminder dataset from the gapminder R package.
+
+```{r}
+head(gapminder)
+```
+
+### Population
+
+The table below shows a summary for the population grouped by continent.
+
+```{r}
+#| label: gapminder-lifexp  
+
+gapminder |>    
+  filter(year == 2007) |>    
+  group_by(continent) |>   
+  summarise(     
+    mean_life_exp = mean(pop)   
+    ) |>    
+  gt()  
+```
+
+### Life expectancy
+
+```{r}
+#| label: boxplot-continent
+#| fig-width: 5
+#| fig-asp: 0.618
+
+gapminder_2007 <- gapminder |> 
+  filter(year == 2007)
+
+ggplot(data = gapminder_2007, 
+       mapping = aes(x = continent, 
+                     y = lifeExp)) +
+  geom_boxplot() +
+  geom_jitter(width = 0.1, alpha = 1/4, size = 3) +
+  labs(x = NULL,
+       y = "life expectancy") +
+  theme_minimal() 
+```
+
+# Module 02a: Data visualization with ggplot2
+
+## Import
+
+```{r}
+library(ggplot2)
+library(ggthemes)
+library(ggridges)
+library(palmerpenguins)
+```
+
+## Explore
+
+```{r}
+head(penguins)
+str(penguins)
+```
+
+## Visualize with ggplot2
+
+### Functions and arguments
+
+-   functions: ggplot(), aes(), geom_point()
+-   arguments: data, mapping, color
+
+```{r}
+ggplot(data = penguins,
+       mapping = aes(x = flipper_length_mm, 
+                     y = body_mass_g)) +
+  geom_point()
+```
+
+### Aesthetic mappings
+
+-   options: x, y, color, shape, size, alpha
+
+```{r}
+ggplot(data = penguins,
+       mapping = aes(x = flipper_length_mm, 
+                     y = body_mass_g, 
+                     color = species,
+                     shape = species)) +
+  geom_point()
+```
+
+### Settings
+
+```{r}
+ggplot(data = penguins,
+       mapping = aes(x = flipper_length_mm, 
+                     y = body_mass_g, 
+                     color = species,
+                     shape = species)) +
+  geom_point(size = 5, alpha = 0.7)
+```
+
+### Color scales
+
+```{r}
+
+ggplot(data = penguins,
+       mapping = aes(x = flipper_length_mm, 
+                     y = body_mass_g, 
+                     color = species,
+                     shape = species)) +
+  geom_point(size = 5, alpha = 0.7) +
+  scale_color_colorblind() 
+
+```
+
+```{r}
+
+ggplot(data = penguins,
+       mapping = aes(x = flipper_length_mm, 
+                     y = body_mass_g, 
+                     color = species,
+                     shape = species)) +
+  geom_point(size = 5, alpha = 0.7) +
+  scale_color_manual(values = c("red", "blue", "green")) 
+
+```
+
+### Facets
+
+Keyboard shortcut for the tilde (\~) varies by keyboard layout:
+
+-   US keyboard Windows/Mac: Shift + \` (top left of your keyboard next to the 1)
+-   UK keyboard Windows/Mac: Shift + \# (bottom right of your keyboard, next to Enter)
+-   CH keyboard Windows/Max: Alt/Option + -
+
+```{r}
+ggplot(data = penguins,
+       mapping = aes(x = flipper_length_mm,
+                     y = body_mass_g)) +
+  geom_point() +
+  facet_grid(species ~ island)
+```
+
+```{r}
+ggplot(data = penguins,
+       mapping = aes(x = flipper_length_mm,
+                     y = body_mass_g)) +
+  geom_point() +
+  facet_wrap(~species)
+```
+
+### Themes
+
+Some code in this section is already prepared, we will add more code together.
+
+```{r}
+
+ggplot(data = penguins,
+       mapping = aes(x = flipper_length_mm, 
+                     y = body_mass_g, 
+                     color = species,
+                     shape = species)) +
+  geom_point(size = 5, alpha = 0.7) +
+  scale_color_colorblind() +
+  theme_minimal()
+
+```
+
+## Visualizing distributions
+
+### Categorical variables
+
+```{r}
+ggplot(data = penguins,
+       mapping = aes(x = species)) +
+  geom_bar()
+```
+
+```{r}
+ggplot(data = penguins,
+       mapping = aes(x = species,
+                     fill = island)) +
+  geom_bar()
+```
+
+### Numerical continuous variables
+
+The code in this section is already prepared, we will run through the code chunks together.
+
+```{r}
+ggplot(data = penguins,
+       mapping = aes(x = body_mass_g)) +
+  geom_histogram()
+```
+
+```{r}
+ggplot(data = penguins,
+       mapping = aes(x = body_mass_g,
+                     fill = species)) +
+  geom_histogram()
+```
+
+```{r}
+ggplot(data = penguins,
+       mapping = aes(x = body_mass_g,
+                     fill = species)) +
+  geom_density()
+```
+
+```{r}
+ggplot(data = penguins,
+       mapping = aes(x = body_mass_g,
+                     y = species,
+                     fill = species)) +
+  geom_density_ridges()
+```
+
+# Module 02b: Working with R
+
+## Import
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(gapminder)
+```
+
+## Explore
+
+```{r}
+head(gapminder)
+tail(gapminder)
+glimpse(gapminder)
+str(gapminder)
+nrow(gapminder)
+ncol(gapminder)
+```
+
+## Transform - Narrow down
+
+```{r}
+gapminder_2007 <- gapminder |> 
+  filter(year == 2007)
+```
+
+-   Keyboard shortcut for pipe operator: Ctrl / Cmd + Shift + M
+-   Keyboard shortcut for assignment operator: Alt + -
+
+## Visualize
+
+```{r}
+#| eval: true
+ggplot(data = gapminder_2007,
+       mapping = aes(x = continent,
+                     y = lifeExp)) +
+  geom_boxplot()
+```
+
+# Module 02: Make a plot
+
+## Task 1: Import
+
+The required packages for this homework exercise have already been added.
+
+1.  Run the code chunk with the label 'load-packages' to load the required packages. Tipp: Click on the green play button in the top right corner of the code chunk.
+
+```{r}
+library(gapminder)
+library(ggplot2)
+library(dplyr)
+```
+
+## Task 2: Transform for data in 2007
+
+Below is a typical task description as you will find them in the homework assignments. For "Fill in the gaps" tasks, you should replace the underscores \_\_\_ with the described code and then change the value of the code block option from false to true. In other tasks, you will create your own code from scratch. Over time, the task descriptions will be become less detailed.
+
+**Fill in the gaps**
+
+1.  A code chunk has already been created below.
+
+2.  Start with the `gapminder` object and add the pipe operator at the end of the line.
+
+3.  On a new line use the `filter()` function to narrow down the data for observation of the year 2007.
+
+4.  Use the assignment operator to assign the data to an object named `gapminder_2007`.
+
+5.  Run the code contained in the code chunk and fix any errors.
+
+6.  Next to the code chunk option `#| eval:` change the value from `false` to `true`.
+
+7.  Render the document and fix any errors.
+
+```{r}
+#| eval: true
+ 
+gapminder_2007 <- gapminder |> 
+  filter(year == 2007) 
+```
+
+## Task 3: Create a boxplot
+
+This is a typical task without any starter code.
+
+1.  Add a new code chunk below point 5.
+
+2.  Use the `ggplot()` function and the `gapminder_2007` object to create a boxplot with the following aesthetic mappings:
+
+-   continent to the x-axis;
+-   life expectancy to the y-axis;
+-   continent to color using the `fill = continent` argument inside `aes()`
+
+3.  Run the code contained in the code chunk and fix any errors.
+
+4.  What are the data types of the three variables used for aesthetic mappings?
+
+```{r}
+ggplot(data = gapminder_2007,
+       mapping = aes(x = continent,
+                     y = lifeExp,
+                     fill = continent)) +
+  geom_boxplot()
+```
+
+#Assignment 02: Data Visualisation
+
+## Task 1: Import
+
+The required packages for this homework exercise have already been added.
+
+1.  Run the code chunk with the label 'load-packages' to load the required packages. Tipp: Click on the green play button in the top right corner of the code chunk.
+
+```{r}
+library(gapminder)
+library(ggplot2)
+library(dplyr)
+library(readr)
+library(sf)
+library(rnaturalearth)
+```
+
+## Task 2: Transform for data in 2007
+
+**Fill in the gaps**
+
+1.  A code chunk has already been created below.
+
+2.  Start with the `gapminder` object and add the pipe operator at the end of the line.
+
+3.  On a new line use the `filter()` function to narrow down the data for observation of the year 2007.
+
+4.  Use the assignment operator to assign the data to an object named `gapminder_2007`.
+
+5.  Run the code contained in the code chunk and fix any errors.
+
+6.  Next to the code chunk option `#| eval:` change the value from `false` to `true`.
+
+7.  Render the document and fix any errors.
+
+```{r}
+#| eval: true
+ 
+gapminder_2007 <- gapminder |> 
+  filter(year == 2007) 
+```
+
+## Task 3: Summarize data for life expectancy by continent
+
+**Fill in the gaps**
+
+1.  A code chunk has already been created.
+
+2.  Start with the `gapminder_2007` object and add the pipe operator at the end of the line.
+
+3.  On a new line use the `group_by()` function to group the operations that follow by continent. Add the pipe operator at the end of the line.
+
+4.  On a new line use the `summarise()` function to calculate the number of observations (count) and median life expectancy.
+
+5.  Use the assignment operator to assign the data to an object named `gapminder_summary_2007`.
+
+6.  Run the code contained in the code chunk and fix any errors.
+
+7.  Next to the code chunk option `#| eval:` change the value from `false` to `true`.
+
+8.  Render the document and fix any errors.
+
+```{r}
+#| eval: true
+
+gapminder_summary_2007 <- gapminder_2007 |> 
+  group_by(continent) |> 
+  summarise(
+    count = n(),
+    lifeExp = median(lifeExp)
+  )
+```
+
+## Task 4: Summarize data for life expectancy by continent and year
+
+**Fill in the gaps**
+
+1.  A code chunk has already been created.
+
+2.  Start with the `gapminder` object and add the pipe operator at the end of the line.
+
+3.  On a new line use the `group_by()` function to group the operations that follow by continent and year. Add the pipe operator at the end of the line.
+
+4.  On a new line use the `summarise()` function to calculate and median life expectancy.
+
+5.  Use the assignment operator to assign the data to an object named `gapminder_summary_continent_year`
+
+6.  Run the code contained in the code chunk and fix any errors.
+
+7.  Next to the code chunk option `#| eval:` change the value from `false` to `true`.
+
+8.  Render the document and fix any errors.
+
+```{r}
+#| eval: true
+
+gapminder_summary_continent_year <- gapminder |> 
+  group_by(continent, year) |> 
+  summarise(lifeExp = median(lifeExp)) 
+
+```
+
+## Task 5: Data visualization
+
+Thank you for working through the previous tasks. We are convinced that you have done a great job, but because the task descriptions aren't always unambiguous, we have imported the data that we would have expected to be created and stored in the objects `gapminder_2007`, `gapminder_summary_2007` and `gapminder_summary_continent_year` at the previous code chunks. This is to ensure that you can work through the following tasks.
+
+1.  Run the code contained in the code chunk below to import the data.
+
+```{r}
+#| label: load-data
+
+gapminder_2007 <- read_rds(here::here("/cloud/project/data/gapminder-2007.rds"))
+
+gapminder_summary_2007 <- read_rds(here::here("/cloud/project/data/gapminder-summary-2007.rds"))
+
+gapminder_summary_continent_year <- read_rds(here::here("/cloud/project/data/gapminder-summary-continent-year.rds"))
+
+```
+
+## Task 6: Create a boxplot
+
+1.  A code chunk has already been created.
+
+2.  Use the `ggplot()` function and the `gapminder_2007` object to create a boxplot with the following aesthetic mappings:
+
+-   continent to the x-axis;
+-   life expectancy to the y-axis;
+-   continent to color using the `fill = continent` argument inside `aes()`
+
+3.  Do not display (ignore) the outliers in the plot. **Note: Use a search engine or an AI tool to find the solution and add the link to the solution you have found.**
+
+4.  Run the code contained in the code chunk and fix any errors.
+
+5.  What are the data types of the three variables used for aesthetic mappings?
+
+```{r}
+
+ggplot(data = gapminder_2007,
+       mapping = aes(x = continent,
+                     y = lifeExp,
+                     fill = continent)) +
+  geom_boxplot(outlier.shape = NA) 
+
+```
+
+## Task 7: Create a timeseries plot
+
+1.  A code chunk has already been created.
+
+2.  Use the `ggplot()` function and the `gapminder_summary_continent_year` object to create a connected scatterplot (also called timeseries plot) using the `geom_line()` and `geom_point()`functions with the following aesthetic mappings:
+
+-   year to the x-axis;
+-   life expectancy to the y-axis;
+-   continent to color using the `color = continent` argument inside `aes()`
+
+3.  Run the code contained in the code chunk and fix any errors.
+
+```{r}
+
+ggplot(data = gapminder_summary_continent_year,
+       mapping = aes(x = year,
+                     y = lifeExp,
+                     color = continent)) +
+  geom_line() +
+  geom_point() 
+
+```
+
+## Task 8: Create a barplot
+
+### with `geom_col()`
+
+1.  A code chunk has already been created.
+
+2.  Use the `ggplot()` function and the `gapminder_summary_2007` object to create a barplot using the `geom_col()` function with the following aesthetic mappings:
+
+-   continent to the x-axis;
+-   count to the y-axis;
+
+3.  Run the code contained in the code chunk and fix any errors.
+
+```{r}
+ggplot(data = gapminder_summary_2007,
+       mapping = aes(x = continent,
+                     y = count)) +
+  geom_col()
+```
+
+### with `geom_bar()`
+
+1.  A code chunk has already been created.
+
+2.  Use the `ggplot()` function and the `gapminder_2007` object to create a barplot using the `geom_bar()` function with the following aesthetic mappings:
+
+-   continent to the x-axis;
+
+3.  Run the code contained in the code chunk and fix any errors.
+
+4.  The plot is identical to the plot created with `geom_col()`. Why? What does the `geom_bar()` function do? Write your text here:
+
+```{r}
+ggplot(data = gapminder_2007,
+       mapping = aes(x = continent)) +
+  geom_bar()
+```
+
+## Task 9: Create a histogram
+
+1.  A code chunk has already been created.
+
+2.  Use the `ggplot()` function and the `gapminder_2007` object to create a histogram using the `geom_histogram()` function with the following aesthetic mappings:
+
+-   life expectancy to the x-axis;
+-   continent to color using the `fill = continent` argument inside `aes()`
+
+3.  Run the code contained in the code chunk and fix any errors.
+
+4.  Inside the `geom_histogram()` function, add the following arguments and values:
+
+-   `col = "grey30"`
+-   `breaks = seq(40, 85, 2.5)`
+
+5.  Run the code contained in the code chunk and fix any errors.
+
+6.  Describe how the `geom_histogram()` function is similar to the `geom_bar()` function.
+
+7.  What happens by adding the 'breaks' argument? Play around with the numbers inside of `seq()` to see what changes. Describe here what you observe:
+
+```{r}
+
+ggplot(data = gapminder_2007,
+       mapping = aes(x = lifeExp, 
+                     fill = continent)) +
+  geom_histogram(col = "grey30", breaks = seq(40, 85, 2.5)) 
+
+```
+
+## Task 10: Scatterplot and faceting
+
+1.  A code chunk has already been created.
+
+2.  Use the `ggplot()` function and assign `gapminder_2007` and create a scatterplot using the `geom_point()`function with the following aesthetic mappings:
+
+-   gdpPercap the x-axis;
+-   lifeExp to the y-axis;
+-   population to the size argument;
+-   country to color using the `color = continent` argument inside `aes()`
+
+4.  Run the code contained in the code chunk and fix any errors.
+
+5.  Use the variable continent to facet the plot by adding: `facet_wrap(~continent)`.
+
+6.  Run the code contained in the code chunk and fix any errors.
+
+```{r}
+
+ggplot(data = gapminder_2007,
+       mapping = aes(x = gdpPercap,
+                     y = lifeExp,
+                     size = pop,
+                     color = country)) +
+  geom_point(show.legend = FALSE) +
+  facet_wrap(~continent) 
+  
+```
+
+## Task 11: Create a lineplot and use facets
+
+1.  A code chunk with complete code has already been prepared.
+
+2.  Run the code contained in the code chunk and fix any errors.
+
+3.  Remove the '\#' sign at the line that starts with the `scale_color_manual()` function
+
+4.  What is stored in the `country_colors` object? Find out by executing the object in the Console (type it to the Console and hit enter). Do the same again, but with a question mark `?country_colors`.
+
+5.  Next to the code chunk option `#| eval:` change the value from `false` to `true`.
+
+6.  Render the document and fix any errors.
+
+```{r}
+#| eval: true
+
+ggplot(data = gapminder,
+       mapping = aes(x = year, 
+                     y = lifeExp, 
+                     group = country, 
+                     color = country)) +
+  geom_line(lwd = 1, show.legend = FALSE) + 
+  facet_wrap(~continent) +
+  # scale_color_manual(values = country_colors) +
+  theme_minimal() 
+
+```
+
+## Task 12: Create a choropleth Maps
+
+You can also prepare maps with `ggplot2`. It's beyond the scope of the class to teach you the foundations of spatial data in R, but a popular package to work with spatial data is the `sf` (Simple Features) R Package. The `rnaturalearth` R Package facilitates world mapping by making [Natural Earth](https://www.naturalearthdata.com/) map data more easily available to R users.
+
+The code chunk below contains code for a world map that shows countries by income group. To view the map, do the following:
+
+1.  Run the code contained in the code chunk and fix any errors.
+
+2.  Next to the code chunk option `#| eval:` change the value from `false` to `true`.
+
+3.  Render the document and fix any errors.
+
+```{r}
+#| eval: true
+
+world <- ne_countries(scale = "small", returnclass = "sf")
+
+world |> 
+  mutate(income_grp = factor(income_grp, ordered = T)) |> 
+  ggplot(aes(fill = income_grp)) + 
+  geom_sf() +
+  theme_void() +
+  theme(legend.position = "top") +
+  labs(fill = "Income Group:") +
+  guides(fill = guide_legend(nrow = 2, byrow = TRUE))
+
+
+```
+
+The code for the code chunk is taken from here: More here: https://bookdown.org/alhdzsz/data_viz_ir/maps.html
+
+### Working with spatial data in R
+
+If you are interested in working with spatial data in R, then we recommend the following resources for further study:
+
+-   Geocompuation with R - Book: https://geocompr.robinlovelace.net/
+-   Simple Features for R - Article: https://r-spatial.github.io/sf/articles/sf1.html
+-   tmap: thematic maps in R - R Package: https://r-tmap.github.io/tmap/
+
+# Module 03a: Data transformation with dplyr
+
+```{r}
+library(readr)
+library(dplyr)
+```
+
+## Import
+
+In this exercise we use data of the UNICEF/WHO Joint Monitoring Programme (JMP) for Water Supply, Sanitation and Hygiene (WASH). The data is available at <https://washdata.org/data> and published as an R data package at <https://github.com/WASHNote/jmpwashdata/>.
+
+The data set is available in the `data` folder as a CSV file named `jmp_wld_sanitation_long.csv`.
+
+The data set contains the following variables:
+
+-   `name`: country name
+-   `iso3`: ISO3 country code
+-   `year`: year of observation
+-   `region_sdg`: SDG region
+-   `residence`: residence type (national, rural, urban)
+-   `varname_short`: short variable name (JMP naming convention)
+-   `varname_long`: long variable name (JMP naming convention)
+
+We use the `read_csv()` function to import the data set into R.
+
+```{r}
+sanitation <- read_csv("/cloud/project/data/jmp_wld_sanitation_long.csv")
+
+```
+
+## Explore
+
+```{r}
+sanitation
+glimpse(sanitation)
+```
+
+## Transform with dplyr
+
+The `dplyr` R Package aims to provide a function for each basic verb of data manipulation. These verbs can be organised into three categories based on the component of the dataset that they work with:
+
+-   Rows
+-   Columns
+-   Groups of rows
+
+### filter()
+
+The function `filter()` chooses rows based on column values. To use filtering effectively, you have to know how to select the observations that you want using the comparison operators. R provides the standard suite: \>, \>=, \<, \<=, != (not equal), and == (equal).
+
+```{r}
+
+sanitation |> 
+  filter(residence == "national")
+
+sanitation |> 
+  filter(residence != "national")
+
+sanitation |> 
+  filter(residence == "national", iso3 == "SEN") 
+
+sanitation |> 
+  filter(iso3 == "UGA" | iso3 == "PER" | iso3 == "IND") 
+
+sanitation |> 
+  filter(iso3 %in% c("UGA", "PER", "IND"))
+
+sanitation |> 
+  filter(percent > 80)
+
+sanitation |> 
+  filter(percent <= 5)
+
+sanitation |> 
+  filter(is.na(percent))
+
+sanitation |> 
+  filter(!is.na(percent))
+
+```
+
+-   Keyboard shortcut for vertical bar \| (OR) in US/CH is: Shift + / (Windows) and Option + / (Mac)
+-   Keyboard shortcut for vertical bar \| (OR) in UK: It's complitcated
+-   Keyboard shortcut for pipe operator: Ctrl / Cmd + Shift + M
+-   Keyboard shortcut for assignment operator: Alt + -
+
+**Storing a resulting data frame as a new object**
+
+```{r}
+sanitation_national_2020_sm <- sanitation |> 
+  filter(residence == "national",
+         year == 2020,
+         varname_short == "san_sm")
+```
+
+### arrange()
+
+The function `arrange()` changes the order of the rows.
+
+```{r}
+
+sanitation_national_2020_sm |> 
+  arrange(percent)
+
+sanitation_national_2020_sm |> 
+  arrange(desc(percent))
+
+```
+
+### select()
+
+The `select()` function chooses columns based on their names.
+
+```{r}
+sanitation_national_2020_sm |> 
+  select(name, percent)
+
+sanitation_national_2020_sm |> 
+  select(-varname_short)
+
+sanitation_national_2020_sm |> 
+  select(name:region_sdg, percent)
+```
+
+### rename()
+
+The `rename()` function changes the names of variables.
+
+```{r}
+sanitation |> 
+  rename(country = name)
+```
+
+### mutate()
+
+The `mutate()` function adds new variables based on existing variables or external data.
+
+```{r}
+sanitation |> 
+  mutate(prop = percent / 100)
+
+sanitation |> 
+  mutate(id = seq(1:n()))
+```
+
+### relocate()
+
+```{r}
+sanitation |> 
+  mutate(id = 1:n()) |> 
+  relocate(id)
+
+sanitation |> 
+  mutate(id = 1:n()) |> 
+  relocate(id, .before = name)
+
+```
+
+### summarise()
+
+The `summarise()` function reduces multiple values down to a single summary.
+
+```{r}
+
+sanitation_national_2020_sm |> 
+  summarise()
+
+sanitation_national_2020_sm |> 
+  summarise(mean_percent = mean(percent))
+
+sanitation_national_2020_sm |> 
+  summarise(mean_percent = mean(percent, na.rm = TRUE))
+
+sanitation_national_2020_sm |> 
+  summarise(n = n(),
+            mean_percent = mean(percent, na.rm = TRUE))
+
+sanitation_national_2020_sm |> 
+  filter(!is.na(percent)) |> 
+  summarise(n = n(),
+            mean_percent = mean(percent),
+            sd_percent = sd(percent))
+```
+
+### group_by()
+
+The `group_by()` function is used to group the data by one or more variables.
+
+```{r}
+
+sanitation_national_2020_sm |> 
+  group_by(region_sdg)
+
+sanitation_national_2020_sm |> 
+  group_by(region_sdg) |> 
+  summarise(n = n(),
+            mean_percent = mean(percent),
+            sd_percent = sd(percent))
+
+sanitation_national_2020_sm |> 
+  filter(!is.na(percent)) |> 
+  group_by(region_sdg) |> 
+  summarise(n = n(),
+            mean_percent = mean(percent),
+            sd_percent = sd(percent))
+```
+
+### count()
+
+The `count()` function is a convenient wrapper for `group_by()` and `summarise(n = n())`. You can prepare frequency tables with `count()`.
+
+```{r}
+
+sanitation |> 
+  count(region_sdg)
+
+sanitation |> 
+  count(varname_short)
+
+sanitation |> 
+  count(varname_long)
+
+sanitation |> 
+  count(varname_short, varname_long)
+
+```
+
+#Module 03b: Filter function
+
+```{r}
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(ggthemes)
+```
+
+## Import
+
+In this exercise we use data of the UNICEF/WHO Joint Monitoring Programme (JMP) for Water Supply, Sanitation and Hygiene (WASH). The data is available at <https://washdata.org/data> and published as an R data package at <https://github.com/WASHNote/jmpwashdata/>.
+
+The data set `jmp_wld_sanitation_long` is available in the `data` folder of this repository. The data set is in long format and contains the following variables:
+
+-   `name`: country name
+-   `iso3`: ISO3 country code
+-   `year`: year of observation
+-   `region_sdg`: SDG region
+-   `residence`: residence type (national, rural, urban)
+-   `varname_short`: short variable name (JMP naming convention)
+-   `varname_long`: long variable name (JMP naming convention)
+
+We use the `read_csv()` function to import the data set into R.
+
+```{r}
+sanitation <- read_csv("/cloud/project/data/jmp_wld_sanitation_long.csv")
+```
+
+## Transform
+
+### Task 1.1
+
+1.  Run all code chunks above.
+2.  Use the `filter()` function to create a subset from the `sanitation` data containing national estimates for the year 2020.
+3.  Store the result as a new object in your environment with the name `sanitation_national_2020`
+
+```{r}
+sanitation_national_2020 <- sanitation |> 
+  filter(residence == "national", year == 2020)
+```
+
+### Task 1.2
+
+1.  Use the `filter()` function to create a subset from the `sanitation` data containing urban and rural estimates for Nigeria.
+2.  Store the result as a new object in your environment with the name `sanitation_nigeria_urban_rural`
+
+```{r}
+sanitation_nigeria_urban_rural <- sanitation |> 
+  filter(name == "Nigeria", residence != "national")
+```
+
+### Task 1.3 (stretch goal)
+
+1.  Use the `ggplot()` function to create a connected scatterplot with `geom_point()` and `geom_line()` for the data you created in Task 1.2.
+
+2.  Use the `aes()` function to map the year variable to the x-axis, the `percent` variable to the y-axis, and the `varname_short` variable to color and group aesthetic.
+
+3.  Use `facet_wrap()` to create a separate plot urban and rural populations.
+
+4.  Change the colors using `scale_color_colorblind()`.
+
+```{r}
+ggplot(data = sanitation_nigeria_urban_rural,
+       mapping = aes(x = year, 
+                     y = percent, 
+                     group = varname_short, 
+                     color = varname_short)) +
+  geom_point() +
+  geom_line() +
+  facet_wrap(~residence) +
+  scale_color_colorblind() 
+
+```
+
+# Module 03c: Summary data transformation
+
+```{r}
+library(readr)
+library(dplyr)
+```
+
+## Import
+
+In this exercise we use data of the UNICEF/WHO Joint Monitoring Programme (JMP) for Water Supply, Sanitation and Hygiene (WASH). The data is available at <https://washdata.org/data> and published as an R data package at <https://github.com/WASHNote/jmpwashdata/>.
+
+The data set `jmp_wld_sanitation_long` is available in the `data` folder of this repository. The data set is in long format and contains the following variables:
+
+-   `name`: country name
+-   `iso3`: ISO3 country code
+-   `year`: year of observation
+-   `region_sdg`: SDG region
+-   `residence`: residence type (national, rural, urban)
+-   `varname_short`: short variable name (JMP naming convention)
+-   `varname_long`: long variable name (JMP naming convention)
+
+We use the `read_csv()` function to import the data set into R.
+
+```{r}
+sanitation <- read_csv("/cloud/project/data/jmp_wld_sanitation_long.csv")
+```
+
+### Task 1.1
+
+1.  Run all code chunks above.
+2.  Use the `glimpse()` function to get an overview of the data set.
+3.  How many variables are in the data set?
+
+```{r}
+glimpse(sanitation)
+```
+
+## Transform
+
+### Task 2.1
+
+1.  Use the `count()` function to identify how many SDG regions are included in the data set.
+2.  How many SDG regions are in the data set?
+
+```{r}
+sanitation |> 
+  count(region_sdg)
+```
+
+### Task 2.2
+
+1.  Use the `count()` function to identify the levels in the varname_short and varname_long variables.
+2.  Which indicator in varname_long does san_od refer to?
+
+```{r}
+sanitation |> 
+  count(varname_short, varname_long)
+```
+
+### Task 2.3
+
+1.  Use the `filter()` function to create a subset from the `sanitation` data containing national estimates for people with "no sanitation facilities" for the year 2020.
+
+2.  Store the result as a new object in your environment with the name `sanitation_national_2020_od`.
+
+```{r}
+sanitation_national_2020_od <- sanitation |> 
+  filter(residence == "national", 
+         year == 2020,
+         varname_short == "san_od")
+
+```
+
+### Task 2.4
+
+1.  Use the `sanitation_national_2020_od` data and the `count()` function to identify the number of countries with 0% for the indicator "no sanitation facilities" in 2020.
+
+```{r}
+sanitation_national_2020_od |> 
+  count(percent)
+```
+
+### Task 2.5
+
+1.  How many countries in `sanitation_national_2020_od` data had no estimate for "no sanitation facilities" in 2020? Tipp: A country without an estimate has `NA` for the percent variable.
+
+```{r}
+sanitation_national_2020_od |> 
+  filter(is.na(percent))
+```
+
+### Task 2.6
+
+1.  Use the `sanitation_national_2020_od` data in combination with `group_by()` and `summarise()` functions to calculate the mean, standard deviation and number of countries for the indicator "no sanitation facilities" in 2020.
+
+2.  How did you treat the missing values for the percent variable in the calculation?
+
+```{r}
+
+sanitation_national_2020_od |> 
+  filter(!is.na(percent)) |>
+  group_by(region_sdg) |> 
+  summarise(
+    mean = mean(percent, na.rm = TRUE),
+    sd = sd(percent, na.rm = TRUE),
+    n = n()
+  )
+```
+
+# Assignment 03: Data transformation with dplyr
+
+```{r}
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(ggthemes)
+```
+
+## Import
+
+In this exercise we use data of the UNICEF/WHO Joint Monitoring Programme (JMP) for Water Supply, Sanitation and Hygiene (WASH). The data is available at <https://washdata.org/data> and published as an R data package at <https://github.com/WASHNote/jmpwashdata/>.
+
+The data set `jmp_wld_sanitation_long` is available in the `data` folder of this repository. The data set is in long format and contains the following variables:
+
+-   `name`: country name
+-   `iso3`: ISO3 country code
+-   `year`: year of observation
+-   `region_sdg`: SDG region
+-   `residence`: residence type (national, rural, urban)
+-   `varname_short`: short variable name (JMP naming convention)
+-   `varname_long`: long variable name (JMP naming convention)
+
+We use the `read_csv()` function to import the data set into R.
+
+```{r}
+sanitation <- read_csv("/cloud/project/data/jmp_wld_sanitation_long.csv")
+```
+
+## Task 1
+
+1.  Run all code chunks above.
+2.  Use the `glimpse()` function to get an overview of the data set.
+3.  How many variables are in the data set?
+
+```{r}
+glimpse(sanitation)
+```
+
+## Task 2
+
+1.  Use the `count()` function with varname_short and varname_long to identify the definitions of the levels in these two variables.
+
+```{r}
+sanitation |> 
+  count(varname_short, varname_long)
+```
+
+## Task 3
+
+1.  Use the `filter()` function to create a subset of the data set that only contains observations:
+
+-   for a country of your choice,
+-   for the year 2000 and 2020,
+-   for all variables that are not "safely managed sanitation services".
+
+2.  Store the result as a new object in your environment with a name of your choice.
+
+```{r}
+sanitation_uga <- sanitation |> 
+  filter(iso3 == "UGA",
+         year %in% c(2000, 2020), 
+         varname_short != "san_sm")
+```
+
+## Task 4
+
+1.  Use the `count()` function with the data you created in Task 3 to verify that year 2000 and 2020 remained in the year variable.
+
+```{r}
+sanitation_uga |> 
+  count(year)
+
+```
+
+## Task 5
+
+1.  Use the `ggplot()` function to create a bar plot with `geom_col()` for the data you created in Task 3.
+
+2.  Use the `aes()` function to map the `residence` variable to the x-axis, the `percent` variable to the y-axis, and the `varname_long` variable to the fill aesthetic.
+
+3.  Use `facet_wrap()` to create a separate plot for each year.
+
+4.  Change the fill colors using `scale_fill_colorblind()`.
+
+5.  Add labels to the bars by copying the code below this bullet point and adding it to your code for the plot.
+
+```         
+geom_text(aes(label = round(percent, 1)), 
+          position = position_stack(vjust = 0.5),
+          size = 3,
+          color = "white") 
+```
+
+```{r}
+ggplot(data = sanitation_uga,
+       mapping = aes(x = residence, 
+                     y = percent, 
+                     fill = varname_long)) +
+  geom_col() +
+  facet_wrap(~year) +
+  scale_fill_colorblind() +
+  geom_text(aes(label = round(percent, 1)), 
+            position = position_stack(vjust = 0.5),
+            size = 3,
+            color = "white") 
+```
+
+## Task 6
+
+If you haven't worked with JMP indicators before, the following questions will be challenging to answer.
+
+1.  Look at the plot that you created. What do you notice about the order of the bars / order of the legend?
+2.  What would you want to change?
+3.  Why did we remove "safely managed sanitation services" from the data set in Task 3?
+
+## Task 7
+
+1.  Run the code in the code chunk below.
+2.  What do you observe when you look at the code and plot?
+
+```{r}
+
+sanitation_2020 <- sanitation |> 
+  filter(year == 2020)
+
+ggplot(data = sanitation_2020,
+       mapping = aes(x = percent, fill = varname_short)) +
+  geom_histogram() +
+  facet_grid(varname_short ~ residence, scales = "free_y") +
+  scale_fill_colorblind() +
+  theme(legend.position = "none") 
+
+```
+
+# Module 04a: Factors
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(readr)
+library(ggthemes)
+```
+
+## Import
+
+```{r}
+waste <- read_csv("/cloud/project/data/processed/waste-city-level-sml.csv") 
+```
+
+## Explore
+
+1.  Run all code chunks above.
+
+2.  Use the `glimpse()` function to inspect the `waste` object.
+
+3.  What does the data cover? Briefly discuss with your room partner.
+
+```{r}
+glimpse(waste)
+```
+
+1.  Use the `count()` function for the `waste` object to count the number of rows for each value of the `income_id` variable.
+
+2.  What do the four values of the `income_id` variable represent?
+
+```{r}
+waste |> 
+  count(income_id)
+```
+
+## Transform
+
+1.  Use the `c()` function to create a vector with the following values: "HIC", "UMC", "LMC", "LIC".
+2.  Use the assignment operator (`<-`) to store the resulting vector as a new object called `levels_income`.
+
+```{r}
+levels_income <- c("HIC", "UMC", "LMC", "LIC")
+```
+
+1.  Use the `mutate()` function to convert the `income_id` variable to a factor variable with the levels specified in the `levels_income` object.
+
+2.  Use the assignment operator (`<-`) to store the resulting data as a new object called `waste_lvl`.
+
+```{r}
+waste_lvl <- waste |> 
+  mutate(income_id = factor(income_id, levels = levels_income))
+```
+
+1.  Use the `count()` function to verify that the `income_id` variable is now a factor variable with the correct levels.
+
+```{r}
+waste_lvl |> 
+  count(income_id)
+```
+
+1.  Starting with `waste_lvl`, use the `mutate()` function to create a new variable called `generation_kg_capita` that contains the `generation_tons_year` variable divided by the `population` variable and multiplied with 1000.
+
+2.  Use the assignment operator (`<-`) to store the resulting data as a new object called `waste_capita`.
+
+```{r}
+waste_capita <- waste_lvl |> 
+  mutate(generation_kg_capita = generation_tons_year / population * 1000) 
+```
+
+## Visualize
+
+1.  Next to the code chunk option `#| eval:` change the value from false to true.
+
+2.  Run the code in the code-chunk below to create a boxplot of the `generation_kg_capita` variable by `income_id`.
+
+3.  What do you observe? Discuss with your room partner.
+
+```{r}
+#| eval: true
+ggplot(data = waste_capita,
+       mapping = aes(x = income_id, 
+                     y = generation_kg_capita, 
+                     color = income_id)) +
+  geom_boxplot(outlier.fill = NA) +
+  geom_jitter(width = 0.1, alpha = 0.3) +
+  scale_color_colorblind() +
+  labs(x = "Income group",
+       y = "Waste generation (tons per capita per year)")
+
+```
+
+# Module 04b: Data import
+
+```{r}
+library(readr)
+library(readxl)
+library(dplyr)
+```
+
+## Import
+
+## Task 1: Import waste data as CSV
+
+1.  Run all code chunks above.
+2.  Use the `read_csv()` function to import the `waste-city-level.csv` file from the `data/raw` folder.
+3.  Assign the resulting data to an object called `waste`.
+
+```{r}
+waste <- read_csv("/cloud/project/data/raw/waste-city-level.csv")
+```
+
+## Task 2: Import JMP data as CSV
+
+1.  Use the `read_csv()` function to import the `jmp_wld_sanitation_long.csv` file from the `data/processed` folder.
+2.  Assign the resulting data to an object called `san_csv`.
+
+```{r}
+san_csv <- read_csv("/cloud/project/data/processed/jmp_wld_sanitation_long.csv")
+```
+
+## Task 3: Import JMP data as RDS
+
+1.  Use the `read_rds()` function to import the `jmp_wld_sanitation_long.rds` file from the `data/processed` folder.
+2.  Assign the resulting data to an object called `san_rds`.
+
+```{r}
+san_rds <- read_rds("/cloud/project/data/processed/jmp_wld_sanitation_long.rds")
+```
+
+## Task 4: Compare CSV and RDS
+
+1.  Use the `glimpse()` function to inspect the `san_csv` and `san_rds` objects.
+2.  What is the difference between the two objects? Discuss with your room partner.
+
+```{r}
+glimpse(san_csv)
+glimpse(san_rds)
+```
+
+## Task 5: Use LLM for an explanation
+
+1.  Open <https://www.perplexity.ai/> in your browser and enter the following prompt:
+
+You are an experienced educator in teaching R to novice users without prior knowledge. Explain what the .rds format is and how it differs from the .csv file format. Avoid technical language.
+
+2.  Read the answer and ask the tool questions for clarification of something is unclear.
+
+3.  Share a link to your conversation here (see screenshot below):
+
+### Screenshot
+
+![](images/perplexity-share-conversation-link.png)
+
+------------------------------------------------------------------------
+
+#Module 05:Conditions
+
+```{r}
+library(tidyverse)
+library(ggthemes)
+```
+
+## Import
+
+We continue to work with a subset of the "What a Waste" database.
+
+```{r}
+waste <- read_csv("/cloud/project/data/processed/waste-city-level-sml.csv")
+```
+
+We will also use an example spreadsheet that was created by one of the course participants.
+
+```{r}
+solids <- readxl::read_excel("/cloud/project/data/raw/TS_poo_2022.xlsx")
+```
+
+## Explore
+
+```{r}
+glimpse(waste)
+```
+
+```{r}
+waste |> 
+    count(income_id)
+```
+
+## Transform
+
+Conditional statements with mutate() & case_when() of dplyr R package
+
+### waste data
+
+```{r}
+#| eval: true
+
+waste_cat <- waste |> 
+    mutate(generation_kg_capita = generation_tons_year / population * 1000) |> 
+    mutate(income_cat = case_when(
+        income_id == "HIC" ~ "high income",
+        income_id == "UMC" ~ "upper-middle income",
+        income_id == "LMC" ~ "lower-middle income",
+        income_id == "LIC" ~ "low income"
+    ))
+
+
+levels_income <- c("HIC", "UMC", "LMC", "LIC")
+
+levels_income_cat <- c("high income", 
+                       "upper-middle income",
+                       "lower-middle income",
+                       "low income")
+
+waste_fct <- waste_cat |>
+    mutate(income_id = factor(income_id, levels = levels_income)) |> 
+    mutate(income_cat = factor(income_cat, levels = levels_income_cat)) |> 
+    relocate(income_cat, .after = income_id)
+
+```
+
+```{r}
+write_rds(x = waste_fct, file = "/cloud/project/data/processed/waste-city-level-sml.rds")
+```
+
+### Faecal sludge solids data
+
+```{r}
+solids |> 
+    mutate(total_solids_gL = case_when(
+        source_type == "septic tank" ~ total_solids_gL * 100,
+        .default = total_solids_gL
+    ))
+```
+
+## Visualize
+
+### Categories as character
+
+```{r}
+#| eval: true
+ggplot(data = waste_cat,
+       mapping = aes(x = income_cat, 
+                     y = generation_kg_capita, 
+                     color = income_cat)) +
+    geom_boxplot(outlier.shape = NA) +
+    geom_jitter(size = 3, width = 0.1, alpha = 0.3) +
+    scale_color_colorblind() +
+    labs(x = "Income group",
+         y = "Waste generation (tons per capita per year)") 
+```
+
+### Categories as factor
+
+```{r}
+
+#| eval: true
+ggplot(data = waste_fct,
+       mapping = aes(x = income_cat, 
+                     y = generation_kg_capita, 
+                     color = income_cat)) +
+    geom_boxplot(outlier.shape = NA) +
+    geom_jitter(size = 3, width = 0.1, alpha = 0.3) +
+    scale_color_colorblind() +
+    labs(x = "Income group",
+         y = "Waste generation (tons per capita per year)") 
+```
+
+#Module 05a: Mutate()
+
+```{r}
+library(tidyverse)
+library(readxl)
+```
+
+## Import
+
+We are using another faecal sludge solids example dataset
+
+```{r}
+sludge <- read_xlsx("/cloud/project/data/raw/faecal-sludge-analysis.xlsx")
+```
+
+## Task 1
+
+1.  A mistake happened during data entry for sample id 16. Use `mutate()` and `case_when()` to change the ts value of 0.72 to 8.72.
+
+```{r}
+sludge |> 
+    mutate(ts = case_when(
+        ts ==  0.72 ~ 8.72,
+        .default = ts
+    ))
+
+```
+
+## Task 2
+
+1.  Another mistake happened during data entry for sample id 6. Use `mutate()` and `case_when()` to change the system value of id 6 from "pit latrine" to "septic tank".
+
+```{r}
+sludge |> 
+    mutate(system = case_when(
+        id ==  6 ~ "septic tank",
+        .default = system
+    ))
+
+```
+
+## Task 3 (stretch goal)
+
+1.  Add a new variable with the name `ts_cat` to the data frame that categorizes sludge samples into low, medium and high solids content.Use `mutate()` and `case_when()` to create the new variable.
+
+-   samples with less than 15 g/L are categorized as low
+-   samples with 15 g/L to 50 g/L are categorized as medium
+-   samples with more than 50 g/L are categorized as high
+
+```{r}
+
+sludge |> 
+    mutate(ts_cat = case_when(
+        ts < 15 ~ "low",
+        ts >= 15 & ts <= 50 ~ "medium",
+        ts > 50 ~ "high"
+    ))
+```
+
+#Module 05b: Dates
+
+```{r}
+library(tidyverse)
+library(readxl)
+```
+
+## Dates
+
+```{r}
+
+dates <- read_excel("/cloud/project/data/raw/date-formats.xlsx")
+
+```
+
+In R and other programming languages, dates are stored as numbers. The number of days since 1970-01-01 is the ISO 8601 standard.
+
+In Excel, dates are stored as numbers of days since 1900-01-01. In Excel, the date number 1 corresponds to "1900-01-01," but this system incorrectly considers 1900 as a leap year, which it is not. As a result, to correctly interpret date numbers that originate from systems like Excel, the origin "1899-12-30" is used to account for this discrepancy
+
+```{r}
+dates_class <- dates |> 
+    mutate(date_iso = as_date(date_iso)) |> 
+    mutate(date_us = mdy(date_us)) |> 
+    mutate(date_eu = dmy(date_eu)) |> 
+    mutate(date_num = as_date(date_num, origin = "1899-12-30")) |> 
+    mutate(date = as_date(date_time)) |> 
+    mutate(date_time_tz = with_tz(date_time, tzone = "Africa/Kampala")) |>
+    mutate(today = today())
+
+OlsonNames()
+```
+
+```{r}
+as.numeric(today())
+as_date(1)
+```
+
+```{r}
+dates_class |> 
+    select(today) |> 
+    mutate(year = year(today)) |>
+    mutate(month = month(today, label = TRUE, abbr = FALSE, locale = "fr_FR")) |> 
+    mutate(quarter = quarter(today)) |>
+    mutate(week = week(today)) |>
+    mutate(day = day(today)) |>
+    mutate(day_of_week = wday(today, label = TRUE, abbr = FALSE, locale = "fr_FR")) |>
+    mutate(day_of_year = yday(today)) |>
+    mutate(week_of_year = week(today)) 
+
+
+```
+
+#Module 05c: Tables
+
+```{r}
+library(tidyverse)
+library(gt)
+library(gtsummary)
+library(knitr)
+library(DT)
+```
+
+## Import
+
+We continue to work with a subset of the "What a Waste" database.
+
+```{r}
+waste_gt <- read_rds("/cloud/project/data/processed/waste-city-level-sml.rds")
+```
+
+## Transform
+
+```{r}
+waste_tbl_income <- waste_gt |> 
+    filter(!is.na(generation_kg_capita))  |> 
+    group_by(income_cat) |> 
+    summarise(
+        count = n(),
+        mean = mean(generation_kg_capita),
+        sd = sd(generation_kg_capita),
+        median = median(generation_kg_capita),
+        min = min(generation_kg_capita),
+        max = max(generation_kg_capita)
+    )
+```
+
+## Table
+
+```{r}
+waste_tbl_income
+```
+
+```{r}
+waste_tbl_income |> 
+    gt() |> 
+    tab_header(title = "Waste generation per capita (kg/year) by income group",
+               subtitle = "Data from 326 cities") |>
+    fmt_number(columns = count:max, decimals = 0) |> 
+    cols_label(income_cat = "income category")
+```
+
+@tbl-waste-income highlights that cities in countries classfied as high income countries generate more waste per capita than cities in lower income countries.
+
+```{r}
+#| label: tbl-waste-income
+#| tbl-cap: "Waste generation per capita (kg/year) by income group. Data from 326 cities."
+waste_tbl_income |> 
+    rename(`income category` = income_cat) |>
+    kable(digits = 0)
+```
+
+# Module 06a: Cross-references
+
+## Tables and Figures
+
+```{r}
+library(tidyverse)
+library(ggthemes)
+library(palmerpenguins)
+library(gt)
+```
+
+### Task 1: Tables
+
+1.  Render the document and identify if the cross-reference to the table generated from the code below works.
+
+2.  Fix the label in the code-chunk below so that the cross-reference works.
+
+3.  Render the document to check if the cross-reference to the table generated from the code below works
+
+See @tbl-penguins for data on a few penguins.
+
+```{r}
+#| label: tbl-penguins
+#| tbl-cap: Bill depth of penquins by island and species.
+
+penguins |> 
+  filter(!is.na(bill_depth_mm)) |> 
+  group_by(island, species) |>
+  summarise(n = n(),
+            mean_bill_depth = mean(bill_depth_mm),
+            sd_bill_depth = sd(bill_depth_mm)) |>
+  ungroup() |> 
+  gt() |> 
+  fmt_number(columns = c(mean_bill_depth, sd_bill_depth),
+             decimals = 1)
+```
+
+### Task 2: Figures
+
+1.  Add a caption and a label for a figure to the code chunk options below.
+2.  Add a cross-reference to the figure generated from the code below.
+
+In @fig-penguins, we see that ...
+
+```{r}
+#| fig-width: 5
+#| fig-asp: 0.618
+#| fig-cap: Bill length and depth of penguins
+#| label: fig-penguins
+
+ggplot(data = penguins,
+       mapping = aes(x = bill_length_mm, 
+                     y = bill_depth_mm,
+                     color = species,
+                     shape = species)) +
+  geom_point() +
+  scale_color_colorblind() +
+  labs(x = "Bill length (mm)", y = "Bill depth (mm)") +
+  theme_minimal()
+```
+
+#Module 06b: Vector types"
+
+```{r}
+library(tidyverse)
+library(gapminder)
+
+```
+
+## Part 1: (Atomic) Vectors
+
+Atomic vectors, of which there are six types: logical, integer, double, character, complex, and raw.
+
+Integer and double vectors are collectively known as numeric vectors.
+
+-   lgl: logical
+-   int: integer
+-   dbl: double
+-   chr: character
+
+```{r}
+
+glimpse(gapminder)
+
+```
+
+### Types of atomic vectors
+
+```{r}
+
+vector_lgl <- c(TRUE, TRUE, FALSE)
+typeof(vector_lgl)
+sum(vector_lgl)
+as.numeric(vector_lgl)
+
+vector_int <- c(1L, 3L, 6L)
+typeof(vector_int)
+
+vector_dbl <- c(1293, 5.1, 90.5)
+typeof(vector_dbl)
+
+vector_chr <- c("large", "small", "medium")
+typeof(vector_chr)
+
+```
+
+### Logical vectors
+
+```{r}
+
+vector_dbl > 150
+
+"large" == vector_chr
+
+str_detect(vector_chr, "lar")
+
+```
+
+### Explicit vector coercion & augmented vectors
+
+Vectors can also contain arbitrary additional metadata in the form of attributes. These attributes are used to create augmented vectors which build on additional behavior. For example, factors are built on top of integer vectors.
+
+```{r}
+
+vector_fct <- factor(vector_chr, levels = c("small", "medium", "large"))
+
+typeof(vector_fct)
+attributes(vector_fct)
+as.integer(vector_fct)
+```
+
+### Tibbles / Dataframes
+
+Tibbles / dataframes have vectors as columns. Each vector has the same length. Each vector can be thought of as a column and the length of each vector is the number of rows.
+
+```{r}
+tib_data <- tibble(
+  vector_lgl,
+  vector_int,
+  vector_dbl,
+  vector_chr,
+  vector_fct,
+  date = Sys.Date()
+)
+```
+
+### Accessing a vector from a dataframe
+
+```{r}
+tib_data |> 
+  pull(vector_fct)
+
+tib_data$vector_fct
+
+tib_data[5]
+
+tib_data[[5]]
+
+```
+
+## Part 2: Programming with R
+
+### For loops
+
+Iterate code for each element in a vector.
+
+```{r}
+
+size <- tib_data$vector_fct
+
+for (s in size) {
+  msg <- paste(
+    "------", s, "------"
+  )
+  print(msg) 
+}
+```
+
+### If statement
+
+```{r}
+pet <- c("bat", "cat", "dog", "bird", "horse")
+
+for(p in pet) {
+  if(p == "dog") {
+    msg <- paste("A", p, "is the best!")
+  } else {
+    msg <- paste("A", p, "is okay I guess.")
+  }
+  print(msg) 
+}
+```
+
+```{r}
+
+sounds <- c(NA, "meow", "woof", "chirp", "neigh")
+
+for (i in seq_along(pet)) {
+  if (pet[i] == "dog") {
+    message <- paste("The", pet[i], "goes", sounds[i])
+  } else {
+    message <- paste("The", pet[i], "says", sounds[i])
+  }
+  print(message)
+}
+```
+
+#Module 06c: Excercises
+
+```{r}
+#| label: setup
+
+library(tidyverse)
+library(nycflights13)
+```
+
+## Task 1: Numeric vector
+
+1.  Create a numeric vector using `c()` with the numbers from 1, 2, 3, 4, 5 to 10. Run the code.
+
+2.  Create a numeric vector using `seq(1, 10)` and run the code.
+
+3.  What's the difference between the two vectors?
+
+```{r}
+c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+
+seq(1, 10)
+```
+
+## Task 2: Character vector
+
+1.  Create a character vector using `c()` with the letters from "a" to "f". Run the code.
+
+2.  On a new line, write `letters` and run the code. What's stored in the `letters` object?
+
+3.  On a new line, write `?letters` and run the code. What did you learn?
+
+```{r}
+
+c("a", "b", "c", "d", "e", "f")
+
+letters
+```
+
+## Task 3: Numeric sequences
+
+1.  Create a numeric vector using `seq(1, 100, 1)` and run the code. What does the code do?
+
+2.  Create a numeric vector using `runif(100, 1, 100)` and run the code. What does the code do?
+
+3.  Create a numeric vector using `sample(1:100, 100, replace = FALSE)` and run the code. What does the code do?
+
+```{r}
+
+seq(1, 100, 1)
+
+runif(100, 1, 100)
+
+sample(1:100, 100, replace = FALSE)
+
+seq_along(letters)
+
+```
+
+## Task 4: Numeric sequences along a character vector
+
+1.  Create a numeric vector using `seq_along(letters)` and run the code. What does the code do?
+
+2.  Create a character vector using `month.name` and run the code. What does the code do?
+
+3.  Create a numeric vector using `seq_along(month.name)` and run the code. What does the code do?
+
+```{r}
+seq_along(letters)
+
+month.name
+
+seq_along(month.name)
+
+```
+
+## Task 5: Distribution of random numbers
+
+1.  Create a numeric vector `runif(n = 1000, min = 1, max = 100)  |> hist()` and run the code. What does the code do? Remove `|> hist()` and run the code again. What does the code do?
+
+2.  Create a numeric vector `rnorm(n = 1000, mean = 500, sd = 150) |> hist()` and run the code. What does the code do? Remove `|> hist()` and run the code again. What does the code do?
+
+```{r}
+
+runif(n = 1000, min = 1, max = 100) |> hist()
+
+rnorm(n = 1000, mean = 500, sd = 150) |> hist()
+```
+
+## Task 6: Logical vectors
+
+1.  Create a numeric vector using `rnorm(n = 1000, mean = 50, sd = 5)` and use the assignment operator to store it in an object called `norm100`. Run the code.
+
+2.  Write:
+
+-   `mean(norm100)` and run the code. What does the code do?
+-   `norm100 >= 50` and run the code. What does the code do?
+-   `sum(norm100 >= 50)` and run the code. What does the code do?
+-   `mean(norm100 >= 50)` and run the code. What does the code do?
+
+```{r}
+
+norm_dist <- rnorm(n = 1000, mean = 50, sd = 5) 
+
+mean(norm_dist)
+
+norm_dist >= 50
+
+sum(norm_dist >= 50)
+
+mean(norm_dist >= 50)
+
+```
+
+## Task 7 (stretch goal)
+
+In this task, we will use the `flights` data object of the `nycflights13` package. The `flights` data object contains information about all flights that departed from NYC (e.g., EWR, JFK and LGA) in 2013. The data object contains 336,776 rows and 19 columns.
+
+1.  Use the `flights` data object with `mutate()` to create `delayed`, a variable that displays whether a flight was delayed (`arr_delay > 0`).
+
+2.  Use relocate to move `delayed` to the front of the data frame. Run the code. What vector type is the `delayed` variable?
+
+3.  Then, remove all rows that contain an NA in `delayed`.
+
+4.  Finally, create a summary table with `summarise()` that shows
+
+-   How many flights were delayed
+-   What proportion of flights were delayed
+
+```{r}
+
+flights |> 
+  mutate(delayed = arr_delay > 0) |> 
+  relocate(delayed) |> 
+  filter(!is.na(delayed)) |> 
+  summarise(sum = sum(delayed),
+            prop = mean(delayed))
+```
+
+# Assignment 06: Data formats
+
+## Part 1: Data preparation
+
+### Task 1: Load packages
+
+The required packages for this homework exercise have already been added.
+
+1.  Run the code chunk below to load the required packages. Tipp: Click on the green play button in the top right corner of the code chunk.
+2.  What's the `tidyverse` Package? Describe in maximum two sentences below.
+    -   The tidyverse is a collection of R packages designed for data science that share a common design philosophy, grammar, and data structures. It provides a powerful and coherent system for working with data, including tools for data import, tidying, manipulation, visualization, and programming.\[1\]\[3\]
+
+        Citations: \[1\] <https://jhudatascience.org/tidyversecourse/intro.html> \[2\] <https://www.tmwr.org/tidyverse> \[3\] <https://tidyverse.tidyverse.org/articles/paper.html> \[4\] <https://rafalab.dfci.harvard.edu/dsbook-part-1/R/tidyverse.html> \[5\] <https://www.datacamp.com/tutorial/tidyverse-tutorial-r>
+
+        Soruce: <https://www.perplexity.ai/search/describe-the-tidyverse-JEwTv1xJTvOFRgullFskTQ>
+
+```{r}
+library(tidyverse)
+```
+
+### Task 2: Import data
+
+1.  Use the `read_csv()` (**Note**: Watch out for the `_` and don't use the `.` as in `read.csv()`) function to import the "msw-generation-and-composition-by-income.csv" data from the `data` directory and assign it to an object with the name `waste_data`.
+
+```{r}
+waste_data = read_csv(file = "/cloud/project/data/msw-generation-and-composition-by-income.csv")
+
+```
+
+### Task 3: Vector coercion
+
+1.  Use `waste_data` and `count()` to create a frequency table for the `income_cat` variable.
+
+2.  Use then `c()` function to create a vector with a sensible order for the the values in `income_cat`. Use the assignment operator `<-` to assign the vector to an object with the name `levels_income_cat`.
+
+3.  Starting with the `waste_data` object, use the pipe operator and the `mutate()` function to convert the `income_cat` variable from a variable of type character to a variable of type factor. Use the levels you defined in the previous step.ories using the following code to identify the correct spelling of the categories in the variable `income_cat`.
+
+4.  Assign the created data frame to an object with the name `waste_data_fct`.
+
+5.  Render and fix any errors
+
+```{r}
+# Create a frequency table for the income_cat variable
+waste_data %>% 
+  count(income_cat)
+
+#Create vector with a sensible order for the values in income_cat
+levels_income_cat <- c(
+  "Low income",
+  "Medium income",
+  "High income"
+)
+
+#Conversion of data type
+waste_data_fct <- waste_data %>%
+  mutate(income_cat = factor(income_cat, levels = levels_income_cat))
+```
+
+### Task 4: From wide to long
+
+1.  Starting with the `waste_data_fct` object, use the `pivot_longer()` function to convert the data frame from a wide to a long format. Apply the following:
+
+-   bring all columns from `food_organic_waste` to `yard_garden_green_waste` into a long format
+-   send the variable names to a column named "waste_category"
+-   send the values of the variables to a column named "percent"
+
+2.  Remove all `NA`s from the `percent` variable
+
+3.  Assign the created data frame to an object with the name `waste_data_long`
+
+4.  Render and fix any errors
+
+```{r}
+waste_data_long <- waste_data_fct %>% 
+  pivot_longer(cols = food_organic_waste:yard_garden_green_waste,
+               names_to = "waste_category", 
+               values_to = "percent") %>% 
+  filter(!is.na(percent))  # Remove rows where percent column is NA
+
+
+```
+
+## Part 2: Data summary
+
+### Task 1: Import data
+
+I have stored the data that I would have expected at the end of the previous task and import it here.
+
+1.  Run the code in the code chunk below.
+
+```{r}
+waste_data_long <- read_rds("/cloud/project/data/msw-generation-and-composition-by-income-long.rds")
+```
+
+### Task 2: Summarise data
+
+1.  Starting with `waste_data_long`, group the data by`income_cat` and `waste_category`, then create a summary table containing the mean of percentages (call this mean_percent) for each group.
+
+    -   could this be done with a for-loop?
+
+2.  Assign the created data frame to an object with the name `waste_data_long_mean`.
+
+```{r}
+waste_data_long_mean <- waste_data_long %>%
+  group_by(income_cat, waste_category) %>%
+  summarise(mean_percent = mean(percent))
+```
+
+### Task 3: Table display
+
+1.  Starting with the `waste_data_long_mean` object, execute the code and observe the output in the Console. Would you publish this table in this format in a report?
+    -   No, while it is in the long format, it still contains NA values. Before publishing I would try to porperly code the variable "income_cat"
+
+```{r}
+waste_data_long_mean
+```
+
+### Task 4: From long to wide
+
+1.  Starting with the `waste_data_long_mean` object, use the pipe operator to add another line of code which uses the `pivot_wider()` function to bring the data from a long format into a wide format using names for variables from `waste_category` and corresponding values from `mean_percent`
+
+2.  Execute the code and observe the output in the Console. Would you publish this table in a report in this format?
+
+    -   For a report I find it more intelligible, however no histograms can be plotted and therefore I would not publish it in that way.
+
+3.  Render and fix any errors
+
+```{r}
+waste_data_long_mean %>% 
+  pivot_wider(names_from = waste_category,
+              values_from = mean_percent)
+
+```
+
+## Part 3: Data visualization
+
+### Task 1: Import data
+
+I have stored the data that I would have expected at the end of the previous task and import it here.
+
+1.  Run the code in the code chunk below.
+
+```{r}
+waste_data_long_mean <- read_rds("/cloud/project/data/msw-generation-and-composition-by-income-long-mean.rds")
+```
+
+### Task 2: Reproduce a plot
+
+1.  Render and fix any errors.
+
+2.  Reproduce the plot that you see as an image below when you render the report and view the output in your Viewer tab in the bottom right window.
+
+**Hint:** To get those bars displayed next to each other, use the `geom_col()` function and apply the `position = position_dodge()` argument and value. The colors don't have to be exactly the same colors, just not the default color scale
+
+**Note:** The size of the plot will be different. That is alright and does not need to match.
+
+```{r}
+ggplot(data = waste_data_long_mean,
+       aes(x = mean_percent,
+           y = waste_category,
+           fill = income_cat)) +
+  geom_col(position = position_dodge(0.9), na.rm = TRUE) +
+  labs(x = "Income Category", y = "Mean Percent", fill = "Waste Category") +
+  theme_minimal()
+
+```
+
+![](figs/fig-01-mean-waste-composition-by-income.png)
+
+#Module 07: Writing scholarly articles
+
+## Scholarly writing
+
+Scholarly articles require much more detail in their front matter than simply a title and an author. Quarto provides a rich set of YAML metadata keys to describe these details. You can copy & paste from this example to your own report.
+
+## Task 1: Front Matter
+
+-   Replace the values under author for name, orcid, email, and affiliation with your own
+-   Render the document to see the changes
+
+## Task 2: Citations
+
+1.  Add the citation key for the paper "'My flight arrives at 5 am, can you pick me up?': The gatekeeping burden of the african academic" as an in-text reference to the sentence below
+
+In @tilley2021my, the authors describe how visitors still expect a personal pick-up, despite the availability of taxi services.
+
+2.  Add the citation key for the paper "'The rich will always be able to dispose of their waste': a view from the frontlines of municipal failure in Makhanda, South Africa" as a citation at the end of the sentence below.
+
+Inequality underpins waste management systems, structuring who can or cannot access services [@kalina2023rich].
+
+## Bibliographies
+
+Your folder already contains a `references.bib` file. One way of creating and adding to this file is by using the RStudio Visual Editor mode. Another way is by exporting a collection in Zotero reference management tool. Part of your homework will be to setup Zotero. For your literature research, you will then use Zotero and in your final report use an exported `.bib` file to cite references in your report. <https://rbtl-fs24.github.io/website/project>
