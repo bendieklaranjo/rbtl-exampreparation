@@ -17,7 +17,7 @@ format:
 editor: visual
 editor_options: 
   chunk_output_type: console
-output-file: finalreport.pdf
+output-file: index
 ---
 
 # Module 01: Getting Started with R
