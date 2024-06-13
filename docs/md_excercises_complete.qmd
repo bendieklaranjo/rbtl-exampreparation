@@ -740,7 +740,9 @@ The `dplyr` R Package aims to provide a function for each basic verb of data man
 
 ### filter()
 
-The function `filter()` chooses rows based on column values. To use filtering effectively, you have to know how to select the observations that you want using the comparison operators. R provides the standard suite: \>, \>=, \<, \<=, != (not equal), and == (equal).
+The function `filter()` chooses rows based on column values. To use filtering effectively, you have to know how to select the observations that you want using the comparison operators.
+
+**R provides the standard suite: \>, \>=, \<, \<=, != (not equal), and == (equal).**
 
 ```{r}
 
