@@ -359,7 +359,7 @@ ggplot(data = gapminder_2007,
   geom_boxplot()
 ```
 
-#Assignment 02: Data Visualisation
+# Assignment 02: Data Visualisation
 
 ## Task 1: Import
 
@@ -921,7 +921,7 @@ sanitation |>
 
 ```
 
-#Module 03b: Filter function
+# Module 03b: Filter function
 
 ```{r}
 library(readr)
@@ -1396,7 +1396,7 @@ You are an experienced educator in teaching R to novice users without prior know
 
 ------------------------------------------------------------------------
 
-#Module 05:Conditions
+# Module 05: Conditions
 
 ```{r}
 library(tidyverse)
@@ -1508,7 +1508,7 @@ ggplot(data = waste_fct,
          y = "Waste generation (tons per capita per year)") 
 ```
 
-#Module 05a: Mutate()
+# Module 05a: case_when()
 
 ```{r}
 library(tidyverse)
@@ -1567,14 +1567,14 @@ sludge |>
     ))
 ```
 
-#Module 05b: Dates
+# Module 05b: Dates
 
 ```{r}
 library(tidyverse)
 library(readxl)
 ```
 
-## Dates
+## Transform to ISO
 
 ```{r}
 
@@ -1619,7 +1619,7 @@ dates_class |>
 
 ```
 
-#Module 05c: Tables
+# Module 05c: Tables
 
 ```{r}
 library(tidyverse)
@@ -1739,7 +1739,7 @@ ggplot(data = penguins,
   theme_minimal()
 ```
 
-#Module 06b: Vector types"
+# Module 06b: Vector types"
 
 ```{r}
 library(tidyverse)
@@ -1885,7 +1885,7 @@ for (i in seq_along(pet)) {
 }
 ```
 
-#Module 06c: Excercises
+# Module 06c: Excercises
 
 ```{r}
 #| label: setup
@@ -2192,7 +2192,7 @@ ggplot(data = waste_data_long_mean,
 
 ![](figs/fig-01-mean-waste-composition-by-income.png)
 
-#Module 07: Writing scholarly articles
+# Module 07: Writing scholarly articles
 
 ## Scholarly writing
 
